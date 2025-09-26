@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use template_rust::{database::TodoDatabase, models::Todo, tui::App};
+use template_rust::{database::TodoDatabase, file_sorter::FileSorter, models::Todo, tui::App};
 
 /// A simple todo application with SQLite and TUI
 #[derive(Parser)]
@@ -44,6 +44,15 @@ enum Commands {
     Delete {
         /// Todo ID
         id: String,
+    },
+    /// Sort files by extension and HTML categories
+    SortFiles {
+        /// Source directory to sort files from
+        #[arg(short, long)]
+        source: String,
+        /// Target directory to organize files into
+        #[arg(short, long)]
+        target: String,
     },
 }
 
@@ -100,6 +109,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 println!("Todo deleted: {}", todo.title);
             } else {
                 eprintln!("Todo not found: {}", id);
+            }
+        }
+        Some(Commands::SortFiles { source, target }) => {
+            let sorter = FileSorter::new(&source, &target);
+            match sorter.sort_files() {
+                Ok(report) => {
+                    report.print_summary();
+                    println!("File sorting completed successfully!");
+                }
+                Err(e) => {
+                    eprintln!("Error sorting files: {}", e);
+                    return Err(e.into());
+                }
             }
         }
     }
