@@ -4,6 +4,7 @@
 //! and terminal user interface (TUI).
 
 pub mod database;
+pub mod file_sorter;
 pub mod models;
 pub mod tui;
 

@@ -1810,6 +1810,7 @@ dependencies = [
  "ratatui",
  "serde",
  "sqlx",
+ "tempfile",
  "tokio",
  "uuid",
 ]
